@@ -1,0 +1,41 @@
+[
+  {
+    "title": "Aurora Wireless Headphones",
+    "merchant": "Northstar Market",
+    "purchase_type": "physical_product",
+    "order_days_ago": 12,
+    "delivery_days_ago": 10,
+    "window_days": 30,
+    "deadline_type": "return_by",
+    "policy_prefix": "Items may be returned within",
+    "anchor_field": "delivery_date",
+    "anchor_phrase": "delivery",
+    "price_text": "$64.00"
+  },
+  {
+    "title": "CloudNotes Monthly Plan",
+    "merchant": "Paperplane Digital",
+    "purchase_type": "subscription",
+    "order_days_ago": 12,
+    "delivery_days_ago": 12,
+    "window_days": 7,
+    "deadline_type": "trial_cancel_by",
+    "policy_prefix": "Cancel the trial within",
+    "anchor_field": "trial_start_date",
+    "anchor_phrase": "trial start",
+    "price_text": "$8.00/month"
+  },
+  {
+    "title": "Trailway Daypack",
+    "merchant": "Summit & Field",
+    "purchase_type": "physical_product",
+    "order_days_ago": 20,
+    "delivery_days_ago": 18,
+    "window_days": 365,
+    "deadline_type": "warranty_expires",
+    "policy_prefix": "Warranty coverage remains in effect for",
+    "anchor_field": "delivery_date",
+    "anchor_phrase": "delivery",
+    "price_text": "$42.50"
+  }
+]
