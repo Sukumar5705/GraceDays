@@ -611,6 +611,36 @@ with tab_purchases:
                 if row.get("due_date"):
                     row["days_remaining"] = (date.fromisoformat(row["due_date"]) - clock.today()).days
                 show_deadline_card(row)
+
+                statuses = ["open", "completed", "dismissed"]
+                current_status = deadline.get("status", "open")
+
+                chosen_status = st.selectbox(
+                    "Deadline status",
+                    statuses,
+                    index=statuses.index(
+                        current_status if current_status in statuses else "open"
+                    ),
+                    key=f"deadline_status_{deadline['id']}",
+                    format_func=lambda value: value.title(),
+                )
+
+                if st.button(
+                    "Save deadline status",
+                    key=f"save_deadline_{deadline['id']}",
+                ):
+                    result = call_tool(
+                        "update_deadline_status",
+                        {
+                            "deadline_id": deadline["id"],
+                            "status": chosen_status,
+                        },
+                    )
+                    st.success(
+                        f"Deadline marked {result['status']}. "
+                        "Its date and evidence remain unchanged."
+                    )
+                    st.rerun()
             st.markdown("#### Evidence records")
             for evidence in details.get("evidence", []):
                 st.markdown(f"**{evidence.get('field_name')}** — {evidence.get('verification_status')}")

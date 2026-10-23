@@ -326,6 +326,39 @@ class TursoDatabase:
             """, (1 if include_closed else 0, limit))
         return {"deadlines": rows}
 
+    def update_deadline_status(self, deadline_id: str, status: str) -> dict:
+        """Update only deadline status; preserve date and evidence."""
+        if status not in {"open", "completed", "dismissed"}:
+            raise TursoDatabaseError(
+                "status must be open, completed, or dismissed", 400
+            )
+
+        if not deadline_id or len(deadline_id) > 80:
+            raise TursoDatabaseError("A valid deadline_id is required", 400)
+
+        with self._connection() as connection:
+            existing = self._fetch_one(
+                connection,
+                "SELECT id FROM deadlines WHERE id = ? LIMIT 1",
+                (deadline_id,),
+            )
+
+            if existing is None:
+                raise TursoDatabaseError("Deadline not found", 404)
+
+            connection.execute(
+                "UPDATE deadlines SET status = ?, updated_at = ? WHERE id = ?",
+                (status, self._now(), deadline_id),
+            )
+            connection.commit()
+
+        return {
+            "id": deadline_id,
+            "status": status,
+            "updated": True,
+            "external_action_performed": False,
+        }
+
     def update_purchase_status(self, purchase_id: str, status: str) -> dict[str, Any]:
         if status not in PURCHASE_STATUSES:
             raise TursoDatabaseError("status must be active, returned, cancelled, or resolved", 400)

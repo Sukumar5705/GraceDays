@@ -19,7 +19,7 @@ AGENT_TOOLS = frozenset({
     "list_purchases", "list_deadlines", "get_purchase_details",
     "update_purchase_status", "draft_action_message",
 })
-UI_TOOLS = frozenset({"save_purchase", "delete_purchase"})
+UI_TOOLS = frozenset({"save_purchase", "delete_purchase", "update_deadline_status"})
 ADMIN_TOOLS = frozenset({"seed_demo_data", "reset_demo_data"})
 
 
@@ -105,6 +105,18 @@ def create_mcp_server(settings: Settings | None = None, database: TursoDatabase 
             raise ValueError("status must be active, returned, cancelled, or resolved")
         response = database.update_purchase_status(purchase_id, status)
         return {**response, "external_action_performed": False}
+
+    @server.tool()
+    def update_deadline_status(deadline_id: str, status: str) -> dict[str, Any]:
+        """UI-only: update a saved deadline's status, without changing its date or evidence."""
+        if not deadline_id or len(deadline_id) > 80:
+            raise ValueError("A valid deadline_id is required")
+
+        if status not in {"open", "completed", "dismissed"}:
+            raise ValueError("status must be open, completed, or dismissed")
+
+        result = database.update_deadline_status(deadline_id, status)
+        return {**result, "external_action_performed": False}
 
     @server.tool()
     def draft_action_message(purchase_id: str, action_type: str) -> dict[str, Any]:
